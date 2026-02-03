@@ -1,38 +1,44 @@
 package com.example.day3sms.controller;
 
 import com.example.day3sms.Model.StudentModel;
-import com.example.day3sms.service.Studentservice;
+import com.example.day3sms.dto.StudentRequestDto;
+import com.example.day3sms.dto.StudentResponseDto;
+import com.example.day3sms.service.StudentService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class StudentController {
-    private final Studentservice service;
-    public StudentController(Studentservice service){
+    private final StudentService service;
+    public StudentController(StudentService service){
         this.service = service;
     }
    // create
     @PostMapping("/add-student")
-    public StudentModel addStudent(@RequestBody StudentModel student){
+    public StudentResponseDto addStudent(@Valid @RequestBody StudentRequestDto student){
         return service.addStudent(student);
     }
   // display
     @GetMapping("/Students")
-    public List<StudentModel>  getStudents(){
-        return service.getStudents();
+    public List<StudentResponseDto>  getStudents(){
+        return service.getAllStudents();
     }
 
     // update
     @PutMapping("/update/{id}")
-    public StudentModel updateStudent(@PathVariable String id, @RequestBody StudentModel student) {
-        return service.updateStudent(id, student);
+    public ResponseEntity<StudentResponseDto> updateStudent(@PathVariable String id, @RequestBody StudentRequestDto student) {
+        StudentResponseDto updated = service.updateStudent(id, student);
+        return ResponseEntity.ok(updated);
     }
 
     // delete
     @DeleteMapping("/delete/{id}")
-    public void deleteStudentById(@PathVariable String id){
-        service.deleteStudentById(id);
+    public ResponseEntity<Void> deleteStudent(@PathVariable String id){
+        service.deleteStudent(id);
+        return ResponseEntity.noContent().build();
     }
 
 
